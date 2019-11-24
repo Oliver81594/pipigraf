@@ -6,8 +6,8 @@ zatvorena = 0;   // toto prepina, ci je krabicka zatvorena
 doplnky = 0;
 
 // pre export len jednej casti vypni/zapni tu:
-zobraz_spodok = 0;
-zobraz_vrchnak = 1;
+zobraz_spodok = 1;
+zobraz_vrchnak = 0;
 
 zatvorenie = 2.2;  // 2
 
@@ -479,6 +479,72 @@ module diery_slide(){
      
 }
 
+module rozok(velkost)
+{
+    translate([-krab_dlzka / 2 + velkost / 2 - 2, 
+               -krab_sirka / 2 + velkost / 2 - 2, 
+               -krab_hrubka / 2 + velkost / 2 - 0.5])      
+    rotate([0,0,-45])
+      rotate([45, 0, 0])
+        cube([velkost, velkost, velkost], center=true);
+}
+
+module rozky4()
+{
+    velkost_rozkov = 7;
+    rozok(velkost_rozkov);
+    rotate([0,0,90])
+      rozok(velkost_rozkov);
+    rotate([0,0,-90])
+      rozok(velkost_rozkov);
+    rotate([0,0,180])
+      rozok(velkost_rozkov);
+}
+
+
+
+module opora()
+{
+    opora_dlzka = 3;
+    opora_sirka = 10;
+    translate([-krab_dlzka / 4 + 2, 
+               -krab_sirka / 2 - 1.1, 
+               - krab_hrubka / 2 + 3 + 5])      
+    rotate([-50,0,0])
+      cube([opora_dlzka, opora_sirka, opora_dlzka]);
+}
+
+module opory4()
+{
+    opora();
+    rotate([0, 0, 90])
+      opora();
+    rotate([0, 0, -90])
+      opora();
+    rotate([0, 0, 180])
+      opora();   
+}
+
+module opory8()
+{
+    opory4();
+    mirror([1, 0, 0])
+      opory4();
+}
+
+module rozky_a_opory()
+{
+    intersection()
+    {
+        translate([0,0,3])
+         cube([krab_dlzka - 6,krab_sirka - 6,krab_hrubka], true);    union()
+        {
+            rozky4();
+            opory8();
+        }
+    }
+}
+
 module pipigraf()
 {
     if (zobraz_spodok == 1)
@@ -503,6 +569,8 @@ module pipigraf()
           translate([35,0,-6])
           arduino();
         }
+        
+        rozky_a_opory();
 
         translate([32,-30,-10.8])
           rotate([0,0,90])
@@ -525,3 +593,4 @@ module pipigraf()
 }
 
 pipigraf();
+
